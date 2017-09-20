@@ -99,8 +99,11 @@ app.post('/login', (req, res, next) => {
     username: req.body.username
   }; 
   models.Users.get(user)
-  .then((result) => console.log('Receiver User Data!!', result))     //res.redirect('/'))
-  .catch((err) => console.log('(>^.^)> ERRRORRR', err));//res.redirect('/login'));
+  .then((result) => models.Users.compare(req.body.password, result.password, result.salt))
+  .then((matched) => {
+    matched ? res.redirect('/') : res.redirect('/login');
+  })     
+  .catch((err) => res.redirect('/login'));
 });
 
 
