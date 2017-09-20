@@ -15,5 +15,6 @@ db.connectAsync()
   .then(() => db.queryAsync(`CREATE DATABASE IF NOT EXISTS ${database}`))
   .then(() => db.queryAsync(`USE ${database}`))
   .then(() => createTables(db));
+  // .then(() => db.endAsync());
 
 module.exports = db;

@@ -78,6 +78,30 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
+app.get('/signup', (req, res, next) => {
+  res.render('signup');
+  console.log('Rendered Signup page');
+});
+
+app.post('/signup', (req, res, next) => {
+  models.Users.create(req.body)
+  .then(() => res.redirect('/'))
+  .catch(() => res.redirect('/signup'));
+});
+
+app.get('/login', (req, res, next) => {
+  res.render('login');
+  console.log('Rendered Login page');
+});
+
+app.post('/login', (req, res, next) => {
+  const user = {
+    username: req.body.username
+  }; 
+  models.Users.get(user)
+  .then((result) => console.log('Receiver User Data!!', result))     //res.redirect('/'))
+  .catch((err) => console.log('(>^.^)> ERRRORRR', err));//res.redirect('/login'));
+});
 
 
 /************************************************************/
