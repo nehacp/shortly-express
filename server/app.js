@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(Cookie);
 app.use(Auth.createSession);
+// app.use(Auth.assignSession);
 
 app.get('/', 
 (req, res) => {
