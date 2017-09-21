@@ -21,23 +21,35 @@ app.use(Auth.createSession);
 
 app.get('/', 
 (req, res) => {
-  res.render('index');
+  if (!models.Sessions.isLoggedIn(req.session)) {
+    res.redirect('/login');
+  } else {
+    res.render('index');
+  }
 });
 
 app.get('/create', 
 (req, res) => {
-  res.render('index');
+  if (!models.Sessions.isLoggedIn(req.session)) {
+    res.redirect('/login');
+  } else {
+    res.render('index');
+  }
 });
 
 app.get('/links', 
 (req, res, next) => {
-  models.Links.getAll()
+  if (!models.Sessions.isLoggedIn(req.session)) {
+    res.redirect('/login');
+  } else {
+    models.Links.getAll()
     .then(links => {
       res.status(200).send(links);
     })
     .error(error => {
       res.status(500).send(error);
     });
+  }
 });
 
 app.post('/links', 
@@ -117,6 +129,14 @@ app.post('/login', (req, res, next) => {
   .catch((err) => res.redirect('/login'));
 });
 
+app.get('/logout', (req, res, next) => {
+  models.Sessions.delete({hash: req.cookies.shortlyid})
+  .then(() => {
+    res.clearCookie('shortlyid');
+    res.redirect('/');
+  }) 
+  .catch(err => console.log('Delete cookie error', err));
+});
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail

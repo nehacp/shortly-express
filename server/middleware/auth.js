@@ -21,18 +21,11 @@ module.exports.createSession = (req, res, next) => {
         req.session = {
           hash: result.hash
         };
-        if (result.userId) {
-          req.session.userId = result.userId;
-          models.Users.get({id: result.userId})
-          .then((userInfo) => {
-            req.session.user = {
-              username: userInfo.username
-            };
-            next();
-          });
-        } else {
-          next();
+        if (result.user) {
+          req.session.user = result.user;
+          req.session.userId = result.user.id;
         }
+        next();
       } else {
         models.Sessions.create()
         .then((result) => models.Sessions.get({id: result.insertId}))
@@ -58,13 +51,10 @@ module.exports.createSession = (req, res, next) => {
 module.exports.assignSession = (req, res, next) => {
   models.Users.get( {username: req.body.username})
   .then((result) => {
-    // req.session.user = {
-    //   username: result.username
-    // };
     return models.Sessions.update({hash: req.session.hash}, {userId: result.id});
   })
   .then(result => {
-    console.log('Updated session with userId', result);
+    // console.log('Updated session with userId', result);
     res.redirect('/');
   })
   .catch(err => console.log('error adding userId', err));
