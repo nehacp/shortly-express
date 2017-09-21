@@ -60,6 +60,14 @@ module.exports.assignSession = (req, res, next) => {
   .catch(err => console.log('error adding userId', err));
 };
 
+module.exports.verifySession = (req, res, next) => {
+  if (!models.Sessions.isLoggedIn(req.session)) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+};
+
 /************************************************************/
 // Add additional authentication middleware functions below
 /************************************************************/

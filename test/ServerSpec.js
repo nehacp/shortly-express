@@ -539,7 +539,6 @@ describe('', function() {
 
         db.query(queryString, cookieValue, function(error, users) {
           if (error) { return done(error); }
-          console.log('users result', users);
           var user = users[0];
           expect(user.username).to.equal('Vivian');
           done();
@@ -598,7 +597,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Link creation:', function() {
+  describe('Link creation:', function() {
 
     var cookies = request.jar();
     var requestWithSession = request.defaults({ jar: cookies });
@@ -611,7 +610,7 @@ describe('', function() {
       }
     };
 
-    xbeforeEach(function(done) {
+    beforeEach(function(done) {
       var options = {
         'method': 'POST',
         'followAllRedirects': true,

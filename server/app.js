@@ -19,37 +19,25 @@ app.use(Cookie);
 app.use(Auth.createSession);
 
 
-app.get('/', 
+app.get('/', Auth.verifySession,
 (req, res) => {
-  if (!models.Sessions.isLoggedIn(req.session)) {
-    res.redirect('/login');
-  } else {
-    res.render('index');
-  }
+  res.render('index');
 });
 
-app.get('/create', 
+app.get('/create', Auth.verifySession,
 (req, res) => {
-  if (!models.Sessions.isLoggedIn(req.session)) {
-    res.redirect('/login');
-  } else {
-    res.render('index');
-  }
+  res.render('index');
 });
 
-app.get('/links', 
+app.get('/links', Auth.verifySession,
 (req, res, next) => {
-  if (!models.Sessions.isLoggedIn(req.session)) {
-    res.redirect('/login');
-  } else {
-    models.Links.getAll()
-    .then(links => {
-      res.status(200).send(links);
-    })
-    .error(error => {
-      res.status(500).send(error);
-    });
-  }
+  models.Links.getAll()
+  .then(links => {
+    res.status(200).send(links);
+  })
+  .error(error => {
+    res.status(500).send(error);
+  });
 });
 
 app.post('/links', 
@@ -94,7 +82,7 @@ app.post('/links',
 
 app.get('/signup', (req, res, next) => {
   res.render('signup');
-  console.log('Rendered Signup page');
+  // console.log('Rendered Signup page');
 });
 
 app.post('/signup', (req, res, next) => {
@@ -108,7 +96,7 @@ app.post('/signup', (req, res, next) => {
 
 app.get('/login', (req, res, next) => {
   res.render('login');
-  console.log('Rendered Login page');
+  // console.log('Rendered Login page');
 });
 
 app.post('/login', (req, res, next) => {
@@ -118,12 +106,6 @@ app.post('/login', (req, res, next) => {
   models.Users.get(user)
   .then((result) => models.Users.compare(req.body.password, result.password, result.salt))
   .then((matched) => {
-    // if (matched) {
-    //   next();
-    //   res.redirect('/');
-    // } else {
-    //   res.redirect('/login');
-    // }
     matched ? res.redirect('/') : res.redirect('/login');
   })     
   .catch((err) => res.redirect('/login'));
