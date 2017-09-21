@@ -106,10 +106,14 @@ app.post('/login', (req, res, next) => {
   models.Users.get(user)
   .then((result) => models.Users.compare(req.body.password, result.password, result.salt))
   .then((matched) => {
-    matched ? res.redirect('/') : res.redirect('/login');
+    if (matched) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
   })     
   .catch((err) => res.redirect('/login'));
-});
+}, Auth.assignSession);
 
 app.get('/logout', (req, res, next) => {
   models.Sessions.delete({hash: req.cookies.shortlyid})
