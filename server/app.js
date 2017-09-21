@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(Cookie);
 app.use(Auth.createSession);
-// app.use(Auth.assignSession);
+
 
 app.get('/', 
 (req, res) => {
@@ -87,9 +87,12 @@ app.get('/signup', (req, res, next) => {
 
 app.post('/signup', (req, res, next) => {
   models.Users.create(req.body)
-  .then(() => res.redirect('/'))
+  .then((result) => {
+    next();
+    //res.redirect('/');
+  })
   .catch(() => res.redirect('/signup'));
-});
+}, Auth.assignSession);
 
 app.get('/login', (req, res, next) => {
   res.render('login');
@@ -103,6 +106,12 @@ app.post('/login', (req, res, next) => {
   models.Users.get(user)
   .then((result) => models.Users.compare(req.body.password, result.password, result.salt))
   .then((matched) => {
+    // if (matched) {
+    //   next();
+    //   res.redirect('/');
+    // } else {
+    //   res.redirect('/login');
+    // }
     matched ? res.redirect('/') : res.redirect('/login');
   })     
   .catch((err) => res.redirect('/login'));

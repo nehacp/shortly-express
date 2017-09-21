@@ -55,20 +55,20 @@ module.exports.createSession = (req, res, next) => {
 };
 
 
-
-// module.exports.assignSession = (req, res, next) => {
-//   console.log('cookies in assign', req.cookies);
-//   if (req.cookies['shortlyid']) {
-//     console.log('Cookie ->', req.cookies);
-//     req.session = {
-//       hash: req.cookies.shortlyid
-//     };
-//     next();
-//   } else {
-//     console.log('no length cookie', req.cookies);
-//     next();
-//   }
-// };
+module.exports.assignSession = (req, res, next) => {
+  models.Users.get( {username: req.body.username})
+  .then((result) => {
+    // req.session.user = {
+    //   username: result.username
+    // };
+    return models.Sessions.update({hash: req.session.hash}, {userId: result.id});
+  })
+  .then(result => {
+    console.log('Updated session with userId', result);
+    res.redirect('/');
+  })
+  .catch(err => console.log('error adding userId', err));
+};
 
 /************************************************************/
 // Add additional authentication middleware functions below
